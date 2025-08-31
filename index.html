@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
 <title>Blood Grouping — Lab Report</title>
-<meta name="description" content="Student blood group distribution & Rh phenotype — interactive report (Biotech lab)" />
 <style>
   :root{
     --bg:#f3f7fb;
@@ -13,7 +12,6 @@
     --accent:#06b6d4;
     --accent-2:#10b981;
     --danger:#ef4444;
-    --glass: rgba(255,255,255,0.7);
     --radius:14px;
     --maxw:1080px;
   }
@@ -23,464 +21,202 @@
     font-family: "Segoe UI", Roboto, system-ui, -apple-system;
     background: linear-gradient(140deg,#e6f7ff 0%, #f6fff6 60%);
     color:#0f172a;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    padding:28px;
-    display:flex;
-    justify-content:center;
+    padding:16px;
+    display:flex;justify-content:center;
   }
   .wrap{width:100%;max-width:var(--maxw)}
-  header{
-    display:flex;align-items:center;justify-content:space-between;
-    gap:16px;margin-bottom:18px;
-  }
-  .brand{display:flex;gap:12px;align-items:center}
+  header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px}
+  .brand{display:flex;gap:10px;align-items:center}
   .logo{
-    width:60px;height:60px;border-radius:12px;
-    display:grid;place-items:center;font-weight:700;color:white;
+    width:50px;height:50px;border-radius:12px;display:grid;place-items:center;
     background:linear-gradient(135deg,var(--accent),var(--accent-2));
-    box-shadow:0 6px 22px rgba(6,182,212,0.18)
+    font-weight:bold;color:#fff
   }
   h1{margin:0;font-size:20px}
   .meta{color:var(--muted);font-size:13px}
-  .controls{display:flex;gap:8px}
   button{
-    border:0;padding:10px 12px;border-radius:10px;background:var(--card);
-    box-shadow:0 6px 18px rgba(15,23,42,0.06);cursor:pointer;font-weight:600;
+    border:0;padding:10px 14px;border-radius:10px;background:var(--card);
+    box-shadow:0 4px 12px rgba(15,23,42,0.08);cursor:pointer;font-weight:600;
   }
   button.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white}
-  .grid{display:grid;grid-template-columns:360px 1fr;gap:18px}
+  .grid{display:grid;grid-template-columns:320px 1fr;gap:14px}
   .card{
-    background:var(--card);padding:18px;border-radius:var(--radius);
-    box-shadow:0 8px 30px rgba(15,23,42,0.06);
+    background:var(--card);padding:16px;border-radius:var(--radius);
+    box-shadow:0 6px 20px rgba(15,23,42,0.06);
   }
+  .section-title{font-weight:600;margin-bottom:6px}
   .small{font-size:13px;color:var(--muted)}
-  .section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
-  .section-title h2{margin:0;font-size:16px}
-  textarea{width:100%;min-height:96px;border-radius:8px;border:1px solid #e5e7eb;padding:10px;font-family:inherit}
-  /* table */
+  textarea{width:100%;min-height:80px;border-radius:8px;border:1px solid #e5e7eb;padding:8px}
   table{width:100%;border-collapse:collapse}
-  th,td{padding:8px 10px;border-bottom:1px dashed #eef2f7;text-align:left;font-size:14px}
-  th{background:linear-gradient(90deg,#f8fafc,#ffffff);font-weight:700}
-  input[type="text"], select{padding:8px;border-radius:8px;border:1px solid #e6eef7;width:100%}
-  .controls-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-  .stats{display:flex;gap:12px;flex-wrap:wrap}
-  .stat{
-    background:linear-gradient(180deg,#fff,#fbfeff);padding:12px;border-radius:12px;min-width:140px;
-    box-shadow:0 6px 18px rgba(16,185,129,0.06);
-  }
-  .stat strong{display:block;font-size:20px}
-  .charts{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-  canvas{background:transparent;border-radius:10px}
-  .img-preview{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-  .muted{color:var(--muted)}
-  footer{text-align:center;color:var(--muted);margin-top:14px;font-size:13px}
-  /* responsive */
-  @media (max-width:920px){
-    .grid{grid-template-columns:1fr; }
-    .brand h1{font-size:18px}
-  }
+  th,td{padding:8px;border-bottom:1px solid #e5e7eb;font-size:14px}
+  th{background:#f9fafb;text-align:left}
+  select,input[type=text]{padding:6px;border-radius:6px;border:1px solid #dbeafe;width:100%}
+  .stat{background:#f9fafb;padding:10px;border-radius:10px;flex:1;text-align:center}
+  .stat strong{display:block;font-size:18px}
+  .charts{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+  canvas{background:transparent;max-width:100%;height:auto;border-radius:8px}
+  footer{text-align:center;font-size:12px;color:var(--muted);margin-top:12px}
+  @media(max-width:860px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="brand">
-        <div class="logo">BT</div>
-        <div>
-          <h1>Blood Grouping — Lab Report</h1>
-          <div class="meta">2nd B.Sc. Biotechnology — Practical: Blood typing (Agglutination)</div>
-        </div>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="logo">BT</div>
+      <div>
+        <h1>Blood Grouping — Lab Report</h1>
+        <div class="meta">2nd B.Sc. Biotechnology — Practical</div>
       </div>
-
-      <div class="controls">
-        <button onclick="window.print()">Print / Save PDF</button>
-        <button class="primary" id="autoFillBtn">Auto-fill sample data</button>
-      </div>
-    </header>
-
-    <div class="grid">
-      <!-- LEFT: Summary & Procedure -->
-      <aside class="card" aria-label="Procedure and photos">
-        <div class="section-title">
-          <h2>Procedure (brief)</h2>
-          <span class="small muted">As performed</span>
-        </div>
-        <div class="small">
-          1. Mark three circles on a glass slide labelled A, B, and D.<br>
-          2. Sterilize fingertip and prick with lancet. Discard first drop.<br>
-          3. Add a drop of blood to each circle; to A add anti-A, to B add anti-B, to D add anti-D (Anti-D = Rh).<br>
-          4. Mix each suspension with separate toothpicks and observe agglutination. Determine ABO & Rh phenotype.
-        </div>
-
-        <hr style="margin:12px 0">
-
-        <div class="section-title">
-          <h2>Photos / Figures</h2>
-          <span class="small muted">Add image files below</span>
-        </div>
-
-        <div class="img-preview" id="imgPreview">
-          <!-- Image placeholders; user can click to replace -->
-          <div style="background:#f8fafc;border-radius:10px;padding:8px;display:grid;place-items:center">
-            <input type="file" accept="image/*" onchange="previewImage(event,0)">
-            <small class="muted">Slide photo (A/B/D)</small>
-          </div>
-          <div style="background:#fff7f6;border-radius:10px;padding:8px;display:grid;place-items:center">
-            <input type="file" accept="image/*" onchange="previewImage(event,1)">
-            <small class="muted">Gel / micrograph</small>
-          </div>
-        </div>
-
-        <hr style="margin:12px 0">
-
-        <div class="section-title">
-          <h2>Observations / Result</h2>
-          <span class="small muted">Short conclusion</span>
-        </div>
-        <textarea id="shortConclusion">The sample set identifies ABO distribution and Rh phenotype for the class. Replace with your final sentence: "The most common blood group in the class is O and most common Rh phenotype is Rh positive."</textarea>
-      </aside>
-
-      <!-- RIGHT: Data, table, stats, charts -->
-      <main>
-        <section class="card">
-          <div class="section-title">
-            <h2>Student data (editable)</h2>
-            <div class="small muted">Click Add row to enter names and ABO/Rh values</div>
-          </div>
-
-          <div class="controls-row">
-            <button onclick="addEmptyRow()">Add row</button>
-            <button onclick="clearTable()">Clear table</button>
-            <button onclick="computeAndRender()">Compute stats</button>
-            <button onclick="downloadCSV()">Download CSV</button>
-          </div>
-
-          <div style="overflow:auto;max-height:360px;">
-            <table id="studentsTable">
-              <thead>
-                <tr>
-                  <th style="width:48px">#</th>
-                  <th>Name</th>
-                  <th style="width:140px">ABO group</th>
-                  <th style="width:140px">Rh</th>
-                  <th style="width:92px">Remove</th>
-                </tr>
-              </thead>
-              <tbody id="tbody">
-                <!-- initial rows will be inserted dynamically -->
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="card" style="margin-top:14px">
-          <div class="section-title">
-            <h2>Percent Frequencies</h2>
-            <div class="small muted">Automatic calculation (count / total × 100)</div>
-          </div>
-
-          <div class="stats" id="statsArea">
-            <div class="stat" id="statA"><small class="muted">A</small><strong>—</strong><div class="small muted">count: —</div></div>
-            <div class="stat" id="statB"><small class="muted">B</small><strong>—</strong><div class="small muted">count: —</div></div>
-            <div class="stat" id="statAB"><small class="muted">AB</small><strong>—</strong><div class="small muted">count: —</div></div>
-            <div class="stat" id="statO"><small class="muted">O</small><strong>—</strong><div class="small muted">count: —</div></div>
-            <div class="stat" id="statRhPos"><small class="muted">Rh +</small><strong>—</strong><div class="small muted">count: —</div></div>
-            <div class="stat" id="statRhNeg"><small class="muted">Rh −</small><strong>—</strong><div class="small muted">count: —</div></div>
-          </div>
-
-          <div style="height:12px"></div>
-
-          <div class="charts">
-            <div style="flex:1;min-width:260px">
-              <canvas id="barChart" width="520" height="260" aria-label="Bar chart"></canvas>
-            </div>
-            <div style="width:260px">
-              <canvas id="pieChart" width="260" height="260" aria-label="Pie chart (ABO)"></canvas>
-            </div>
-          </div>
-        </section>
-
-        <section class="card" style="margin-top:14px">
-          <div class="section-title">
-            <h2>Rh phenotype table</h2>
-            <div class="small muted">Computed counts and percentages</div>
-          </div>
-
-          <table>
-            <thead><tr><th>Phenotype</th><th>Count</th><th>Percent (%)</th></tr></thead>
-            <tbody id="rhSummary">
-              <tr><td>Rh positive</td><td>—</td><td>—</td></tr>
-              <tr><td>Rh negative</td><td>—</td><td>—</td></tr>
-            </tbody>
-          </table>
-        </section>
-
-      </main>
     </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button onclick="window.print()">Print</button>
+      <button class="primary" id="autoFillBtn">Auto-fill sample</button>
+    </div>
+  </header>
 
-    <footer>
-      <div class="muted">Prepared for lab record — Blood grouping practical. Use the Auto-fill button to load the example dataset matching the notebook calculations.</div>
-      <div style="margin-top:6px;font-size:12px;color:#9ca3af">© Laboratory — 2nd B.Sc. Biotechnology</div>
-    </footer>
+  <div class="grid">
+    <!-- Left column -->
+    <aside>
+      <div class="card">
+        <div class="section-title">Procedure</div>
+        <div class="small">
+          1. Mark three circles on a clean slide: A, B, D.<br>
+          2. Sterilize fingertip, prick with lancet, discard first drop.<br>
+          3. Place drops of blood: add anti-A to A, anti-B to B, anti-D to D.<br>
+          4. Mix with separate toothpicks, observe agglutination.<br>
+          5. Conclude ABO group and Rh phenotype.
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="section-title">Observation / Result</div>
+        <textarea id="shortConclusion">Most common blood group observed: O. Most common Rh phenotype: Rh positive.</textarea>
+      </div>
+    </aside>
+
+    <!-- Right column -->
+    <main>
+      <div class="card">
+        <div class="section-title">Student Data</div>
+        <div style="margin-bottom:8px;font-size:13px;color:#6b7280">Enter student names and ABO / Rh values</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+          <button onclick="addEmptyRow()">Add row</button>
+          <button onclick="clearTable()">Clear</button>
+          <button onclick="computeAndRender()">Compute stats</button>
+        </div>
+        <div style="overflow:auto;max-height:280px">
+          <table id="studentsTable">
+            <thead><tr><th>#</th><th>Name</th><th>ABO</th><th>Rh</th><th>Remove</th></tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="section-title">Percent Frequencies</div>
+        <div id="statsArea" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px">
+          <div class="stat" id="statA"><small>A</small><strong>—</strong></div>
+          <div class="stat" id="statB"><small>B</small><strong>—</strong></div>
+          <div class="stat" id="statAB"><small>AB</small><strong>—</strong></div>
+          <div class="stat" id="statO"><small>O</small><strong>—</strong></div>
+          <div class="stat" id="statRhPos"><small>Rh +</small><strong>—</strong></div>
+          <div class="stat" id="statRhNeg"><small>Rh −</small><strong>—</strong></div>
+        </div>
+        <div class="charts" style="margin-top:12px">
+          <canvas id="barChart" width="360" height="220"></canvas>
+          <canvas id="pieChart" width="220" height="220"></canvas>
+        </div>
+      </div>
+    </main>
   </div>
 
+  <footer>Prepared for Lab Record — Blood grouping practical</footer>
+</div>
+
 <script>
-/*
-  Interactive behaviour:
-   - table rows editable
-   - compute statistics and draw canvas charts
-   - sample auto-fill (16 students) matching notebook percentages
-*/
-
-// Utility: create element helper
-function el(tag, props){ const e=document.createElement(tag); if(props){Object.assign(e,props)} return e }
-
-// Table operations
-const tbody = document.getElementById('tbody');
-
-function addEmptyRow(name='', abo='O', rh='+'){
-  const idx = tbody.children.length + 1;
-  const tr = el('tr');
-  tr.innerHTML = `
+// create row
+const tbody=document.getElementById("tbody");
+function addEmptyRow(name="",abo="O",rh="+"){
+  const idx=tbody.children.length+1;
+  const tr=document.createElement("tr");
+  tr.innerHTML=`
     <td>${idx}</td>
-    <td><input type="text" value="${escapeHtml(name)}" placeholder="Student name"></td>
-    <td>
-      <select>
-        <option ${abo==='A'?'selected':''}>A</option>
-        <option ${abo==='B'?'selected':''}>B</option>
-        <option ${abo==='AB'?'selected':''}>AB</option>
-        <option ${abo==='O'?'selected':''}>O</option>
-      </select>
-    </td>
-    <td>
-      <select>
-        <option ${rh==='+'?'selected':''}>+</option>
-        <option ${rh==='-'?'selected':''}>-</option>
-      </select>
-    </td>
-    <td><button onclick="removeRow(this)">Remove</button></td>
-  `;
+    <td><input type="text" value="${name}"></td>
+    <td><select><option${abo==="A"?" selected":""}>A</option><option${abo==="B"?" selected":""}>B</option><option${abo==="AB"?" selected":""}>AB</option><option${abo==="O"?" selected":""}>O</option></select></td>
+    <td><select><option${rh==="+"?" selected":""}>+</option><option${rh==="-"?" selected":""}>-</option></select></td>
+    <td><button onclick="removeRow(this)">X</button></td>`;
   tbody.appendChild(tr);
 }
+function removeRow(btn){btn.closest("tr").remove();reindex();computeAndRender();}
+function reindex(){[...tbody.children].forEach((r,i)=>r.children[0].textContent=i+1);}
+function clearTable(){tbody.innerHTML="";computeAndRender();}
 
-function removeRow(btn){
-  const tr = btn.closest('tr');
-  tr.remove();
-  // reindex
-  Array.from(tbody.children).forEach((r,i)=> r.children[0].textContent = i+1);
-  computeAndRender();
-}
-
-function clearTable(){ tbody.innerHTML=''; computeAndRender(); }
-
-// CSV download
-function downloadCSV(){
-  const rows = [['S.No','Name','ABO','Rh']];
-  Array.from(tbody.children).forEach((tr,i)=>{
-    const name = tr.querySelector('input[type=text]').value.trim();
-    const abo = tr.querySelector('select').value;
-    const rh = tr.querySelectorAll('select')[1].value;
-    rows.push([i+1, name, abo, rh]);
-  });
-  const csv = rows.map(r => r.map(c => `"${(c||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob([csv],{type:'text/csv'});
-  const url=URL.createObjectURL(blob);
-  const a=el('a',{href:url,download:'blood_group_data.csv'});
-  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
-}
-
-// Compute stats & render charts
-function computeAndRender(){
-  const rows = Array.from(tbody.children);
-  const total = rows.length;
-  const counts = {A:0,B:0,AB:0,O:0, rhPos:0, rhNeg:0};
-
-  rows.forEach(tr=>{
-    const abo = tr.querySelectorAll('select')[0].value;
-    const rh = tr.querySelectorAll('select')[1].value;
-    if(abo in counts) counts[abo]++;
-    if(rh === '+') counts.rhPos++; else counts.rhNeg++;
-  });
-
-  // percentages
-  function pct(n){ return total? +(n/total*100).toFixed(2) : 0 }
-
-  // Update stat boxes
-  document.getElementById('statA').querySelector('strong').textContent = total ? pct(counts.A) + '%' : '—';
-  document.getElementById('statA').querySelector('.small').textContent = 'count: ' + counts.A;
-  document.getElementById('statB').querySelector('strong').textContent = total ? pct(counts.B) + '%' : '—';
-  document.getElementById('statB').querySelector('.small').textContent = 'count: ' + counts.B;
-  document.getElementById('statAB').querySelector('strong').textContent = total ? pct(counts.AB) + '%' : '—';
-  document.getElementById('statAB').querySelector('.small').textContent = 'count: ' + counts.AB;
-  document.getElementById('statO').querySelector('strong').textContent = total ? pct(counts.O) + '%' : '—';
-  document.getElementById('statO').querySelector('.small').textContent = 'count: ' + counts.O;
-  document.getElementById('statRhPos').querySelector('strong').textContent = total ? pct(counts.rhPos) + '%' : '—';
-  document.getElementById('statRhPos').querySelector('.small').textContent = 'count: ' + counts.rhPos;
-  document.getElementById('statRhNeg').querySelector('strong').textContent = total ? pct(counts.rhNeg) + '%' : '—';
-  document.getElementById('statRhNeg').querySelector('.small').textContent = 'count: ' + counts.rhNeg;
-
-  // Update Rh summary table
-  const rhSummary = document.getElementById('rhSummary');
-  rhSummary.children[0].children[1].textContent = counts.rhPos;
-  rhSummary.children[0].children[2].textContent = total ? pct(counts.rhPos) : '—';
-  rhSummary.children[1].children[1].textContent = counts.rhNeg;
-  rhSummary.children[1].children[2].textContent = total ? pct(counts.rhNeg) : '—';
-
-  // Draw charts
-  drawBarChart([counts.A, counts.B, counts.AB, counts.O]);
-  drawPieChart([counts.A, counts.B, counts.AB, counts.O]);
-}
-
-// Simple bar chart (Canvas)
-function drawBarChart(values){
-  const labels = ['A','B','AB','O'];
-  const c = document.getElementById('barChart');
-  const ctx = c.getContext('2d');
-  const w = c.width, h = c.height;
-  ctx.clearRect(0,0,w,h);
-  // background grid
-  ctx.fillStyle = 'rgba(255,255,255,0.0)';
-  ctx.fillRect(0,0,w,h);
-  const max = Math.max(10, ...values);
-  const margin = 36;
-  const chartW = w - margin*2;
-  const chartH = h - margin*2;
-  const barW = chartW / values.length * 0.6;
-  // axes
-  ctx.strokeStyle = '#e6eef7';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(margin, margin+chartH);
-  ctx.lineTo(margin+chartW, margin+chartH);
-  ctx.stroke();
-
-  // bars
-  values.forEach((v,i)=>{
-    const x = margin + (i+0.2)*(chartW/values.length);
-    const barH = (v/max) * chartH;
-    const y = margin + chartH - barH;
-    // gradient
-    const g = ctx.createLinearGradient(x, y, x, margin+chartH);
-    g.addColorStop(0, i%2===0 ? 'rgba(6,182,212,0.95)' : 'rgba(16,185,129,0.95)');
-    g.addColorStop(1, 'rgba(255,255,255,0.95)');
-    ctx.fillStyle = g;
-    roundRect(ctx, x, y, barW, barH, 8, true, false);
-    // label
-    ctx.fillStyle = '#0f172a';
-    ctx.font = '13px system-ui';
-    ctx.fillText(labels[i], x + barW/2 - 6, margin+chartH + 18);
-    // value label
-    ctx.font = '12px system-ui';
-    ctx.fillText(values[i] + '', x + 6, y - 8);
-  });
-}
-
-// Simple pie chart for ABO
-function drawPieChart(values){
-  const c = document.getElementById('pieChart');
-  const ctx = c.getContext('2d');
-  const w = c.width, h = c.height;
-  ctx.clearRect(0,0,w,h);
-  const cx = w/2, cy = h/2, r = Math.min(w,h)/2 - 6;
-  const total = values.reduce((a,b)=>a+b,0) || 1;
-  const colors = ['#06b6d4','#10b981','#f59e0b','#7c3aed'];
-  let start = -Math.PI/2;
-  values.forEach((v,i)=>{
-    const angle = v/total * Math.PI*2;
-    ctx.beginPath();
-    ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,r,start,start+angle);
-    ctx.closePath();
-    // fill
-    ctx.fillStyle = colors[i%colors.length];
-    ctx.fill();
-    // label line
-    const mid = start + angle/2;
-    const lx = cx + Math.cos(mid)*(r+10);
-    const ly = cy + Math.sin(mid)*(r+10);
-    ctx.fillStyle = '#0f172a';
-    ctx.font = '12px system-ui';
-    const text = (v>0) ? (['A','B','AB','O'][i] + ' ' + Math.round(v/total*100) + '%') : (['A','B','AB','O'][i] + ' 0%');
-    ctx.fillText(text, lx - 20, ly);
-    start += angle;
-  });
-  // center label
-  ctx.fillStyle = '#0b1220';
-  ctx.font = '14px system-ui';
-  ctx.fillText('ABO distribution', cx-44, cy+4);
-}
-
-// small rounded-rect helper
-function roundRect(ctx, x, y, w, h, r, fill, stroke){
-  if (r < 0) r = 0;
-  ctx.beginPath();
-  ctx.moveTo(x+r, y);
-  ctx.arcTo(x+w, y, x+w, y+h, r);
-  ctx.arcTo(x+w, y+h, x, y+h, r);
-  ctx.arcTo(x, y+h, x, y, r);
-  ctx.arcTo(x, y, x+w, y, r);
-  ctx.closePath();
-  if(fill) ctx.fill();
-  if(stroke) ctx.stroke();
-}
-
-// escape helper for names
-function escapeHtml(s){ return (s+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;') }
-
-// Auto-fill sample dataset matching your notebook calculations (16 students)
-document.getElementById('autoFillBtn').addEventListener('click', function(){
+// sample 3 data
+document.getElementById("autoFillBtn").onclick=()=>{
   clearTable();
-  // Derived from your notebook percentages: A=2 (12.5), B=5 (31.25), O=9 (56.25), AB=0
-  // Rh+: 14 (87.5), Rh-:2 (12.5)
-  // We'll assign sample names (you may replace them)
-  const sample = [
-    ['Arul Jhon','B','+'],
-    ['Nikhil C','O','+'],
-    ['Shakthiritha','O','+'],
-    ['Manaswini S','O','+'],
-    ['Smitha','O','+'],
-    ['Chethana','O','+'],
-    ['Swathi','A','+'],
-    ['Anvitha','O','+'],
-    ['K. Sushmitha','O','+'],
-    ['Bhavi','B','-'],
-    ['Varshitha','O','-'],
-    ['Sharvya','B','+'],
-    ['Prathvi','B','+'],
-    ['Fathima','O','+'],
-    ['Namratha','B','+'],
-    ['Suhani','A','+']
-  ];
-  sample.forEach(r => addEmptyRow(r[0], r[1], r[2]));
+  [["Nikhil","O","+"],["Swathi","A","+"],["Avul","B","-"]].forEach(r=>addEmptyRow(...r));
   computeAndRender();
-});
+};
 
-// initialize with no rows
-computeAndRender();
-
-// Image preview
-function previewImage(e, index){
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev){
-    // replace the input with an <img>
-    const parent = e.target.parentElement;
-    parent.innerHTML = `<img src="${ev.target.result}" alt="preview" style="max-width:100%;border-radius:10px">`;
-  }
-  reader.readAsDataURL(file);
+// compute
+function computeAndRender(){
+  const rows=[...tbody.children];
+  const total=rows.length;
+  const counts={A:0,B:0,AB:0,O:0,rhPos:0,rhNeg:0};
+  rows.forEach(tr=>{
+    const abo=tr.querySelectorAll("select")[0].value;
+    const rh=tr.querySelectorAll("select")[1].value;
+    counts[abo]++; rh==="+"?counts.rhPos++:counts.rhNeg++;
+  });
+  function pct(n){return total?Math.round(n/total*100):0;}
+  document.querySelector("#statA strong").textContent=total?pct(counts.A)+"%":"—";
+  document.querySelector("#statB strong").textContent=total?pct(counts.B)+"%":"—";
+  document.querySelector("#statAB strong").textContent=total?pct(counts.AB)+"%":"—";
+  document.querySelector("#statO strong").textContent=total?pct(counts.O)+"%":"—";
+  document.querySelector("#statRhPos strong").textContent=total?pct(counts.rhPos)+"%":"—";
+  document.querySelector("#statRhNeg strong").textContent=total?pct(counts.rhNeg)+"%":"—";
+  drawBarChart([counts.A,counts.B,counts.AB,counts.O]);
+  drawPieChart([counts.A,counts.B,counts.AB,counts.O]);
 }
 
-// Helper: after user edits select fields, recompute periodically
-document.addEventListener('input', function(e){
-  if(e.target && (e.target.tagName==='INPUT' || e.target.tagName==='SELECT' || e.target.tagName==='TEXTAREA')){
-    // small debounce
-    if(window._computeTimeout) clearTimeout(window._computeTimeout);
-    window._computeTimeout = setTimeout(()=> computeAndRender(), 300);
-  }
-});
-
+// charts
+function drawBarChart(values){
+  const c=document.getElementById("barChart"),ctx=c.getContext("2d");
+  ctx.clearRect(0,0,c.width,c.height);
+  const labels=["A","B","AB","O"],colors=["#06b6d4","#10b981","#f59e0b","#7c3aed"];
+  const max=Math.max(...values,1),margin=30,barW=(c.width-2*margin)/values.length*0.6;
+  values.forEach((v,i)=>{
+    const x=margin+i*( (c.width-2*margin)/values.length)+10;
+    const h=(v/max)*(c.height-2*margin);
+    const y=c.height-margin-h;
+    ctx.fillStyle=colors[i];ctx.fillRect(x,y,barW,h);
+    ctx.fillStyle="#111";ctx.fillText(labels[i],x+barW/3,c.height-10);
+    ctx.fillText(v,x+barW/3,y-4);
+  });
+}
+function drawPieChart(values){
+  const c=document.getElementById("pieChart"),ctx=c.getContext("2d");
+  ctx.clearRect(0,0,c.width,c.height);
+  const total=values.reduce((a,b)=>a+b,0)||1;
+  const colors=["#06b6d4","#10b981","#f59e0b","#7c3aed"];
+  let start=-Math.PI/2; const cx=c.width/2,cy=c.height/2,r=90;
+  values.forEach((v,i)=>{
+    const angle=v/total*2*Math.PI;
+    ctx.beginPath();ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,start,start+angle);ctx.closePath();
+    ctx.fillStyle=colors[i];ctx.fill();
+    if(v>0){
+      const mid=start+angle/2;
+      const lx=cx+Math.cos(mid)*(r+20),ly=cy+Math.sin(mid)*(r+20);
+      ctx.fillStyle="#111";ctx.fillText(labels[i]+" "+Math.round(v/total*100)+"%",lx-10,ly);
+    }
+    start+=angle;
+  });
+}
+const labels=["A","B","AB","O"];
+computeAndRender();
 </script>
 </body>
 </html>
